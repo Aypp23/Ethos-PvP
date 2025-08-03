@@ -20,6 +20,11 @@ export interface EthosUser {
         neutral: number;
         negative: number;
       };
+      given?: {
+        positive: number;
+        neutral: number;
+        negative: number;
+      };
     };
     vouch?: {
       given?: {

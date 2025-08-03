@@ -120,24 +120,34 @@ const ComparisonView: React.FC<ComparisonViewProps> = () => {
           return user.xp;
         case 'XP Streak Days':
           return user.xpStreak || 0;
-        case 'Total Reviews':
+        case 'Total Reviews\n(Received)':
           return (user.stats?.review?.received?.positive || 0) + 
                  (user.stats?.review?.received?.neutral || 0) + 
                  (user.stats?.review?.received?.negative || 0);
-        case 'Positive Reviews':
+        case 'Positive Reviews\n(Received)':
           return user.stats?.review?.received?.positive || 0;
-        case 'Neutral Reviews':
+        case 'Neutral Reviews\n(Received)':
           return user.stats?.review?.received?.neutral || 0;
-        case 'Negative Reviews':
+        case 'Negative Reviews\n(Received)':
           return user.stats?.review?.received?.negative || 0;
-        case 'Vouches Given':
+        case 'Total Reviews\n(Given)':
+          return (user.stats?.review?.given?.positive || 0) + 
+                 (user.stats?.review?.given?.neutral || 0) + 
+                 (user.stats?.review?.given?.negative || 0);
+        case 'Positive Reviews\n(Given)':
+          return user.stats?.review?.given?.positive || 0;
+        case 'Neutral Reviews\n(Given)':
+          return user.stats?.review?.given?.neutral || 0;
+        case 'Negative Reviews\n(Given)':
+          return user.stats?.review?.given?.negative || 0;
+        case 'Vouches\n(Given)':
           return user.stats?.vouch?.given?.count || 0;
-        case 'Vouches Received':
+        case 'Vouches\n(Received)':
           return user.stats?.vouch?.received?.count || 0;
-        case 'ETH Vouch Given':
+        case 'ETH Vouch\n(Given)':
           return user.stats?.vouch?.given?.amountWeiTotal ? 
             parseFloat(user.stats.vouch.given.amountWeiTotal) / Math.pow(10, 18) : 0;
-        case 'ETH Vouch Received':
+        case 'ETH Vouch\n(Received)':
           return user.stats?.vouch?.received?.amountWeiTotal ? 
             parseFloat(user.stats.vouch.received.amountWeiTotal) / Math.pow(10, 18) : 0;
         default:
@@ -174,24 +184,34 @@ const ComparisonView: React.FC<ComparisonViewProps> = () => {
             return user.xp;
           case 'XP Streak Days':
             return user.xpStreak || 0;
-          case 'Total Reviews':
+          case 'Total Reviews\n(Received)':
             return (user.stats?.review?.received?.positive || 0) + 
                    (user.stats?.review?.received?.neutral || 0) + 
                    (user.stats?.review?.received?.negative || 0);
-          case 'Positive Reviews':
+          case 'Positive Reviews\n(Received)':
             return user.stats?.review?.received?.positive || 0;
-          case 'Neutral Reviews':
+          case 'Neutral Reviews\n(Received)':
             return user.stats?.review?.received?.neutral || 0;
-          case 'Negative Reviews':
+          case 'Negative Reviews\n(Received)':
             return user.stats?.review?.received?.negative || 0;
-          case 'Vouches Given':
+          case 'Total Reviews\n(Given)':
+            return (user.stats?.review?.given?.positive || 0) + 
+                   (user.stats?.review?.given?.neutral || 0) + 
+                   (user.stats?.review?.given?.negative || 0);
+          case 'Positive Reviews\n(Given)':
+            return user.stats?.review?.given?.positive || 0;
+          case 'Neutral Reviews\n(Given)':
+            return user.stats?.review?.given?.neutral || 0;
+          case 'Negative Reviews\n(Given)':
+            return user.stats?.review?.given?.negative || 0;
+          case 'Vouches\n(Given)':
             return user.stats?.vouch?.given?.count || 0;
-          case 'Vouches Received':
+          case 'Vouches\n(Received)':
             return user.stats?.vouch?.received?.count || 0;
-          case 'ETH Vouch Given':
+          case 'ETH Vouch\n(Given)':
             return user.stats?.vouch?.given?.amountWeiTotal ? 
               parseFloat(user.stats.vouch.given.amountWeiTotal) / Math.pow(10, 18) : 0;
-          case 'ETH Vouch Received':
+          case 'ETH Vouch\n(Received)':
             return user.stats?.vouch?.received?.amountWeiTotal ? 
               parseFloat(user.stats.vouch.received.amountWeiTotal) / Math.pow(10, 18) : 0;
           default:
@@ -327,14 +347,18 @@ const ComparisonView: React.FC<ComparisonViewProps> = () => {
       { label: "Ethos Score", value: user.score, maxValue: 2000, showStar: true },
       { label: "Total XP", value: user.xp, maxValue: 100000, showStar: false },
       { label: "XP Streak Days", value: user.xpStreak || 0, maxValue: 365 },
-      { label: "Total Reviews", value: (user.stats?.review?.received?.positive || 0) + (user.stats?.review?.received?.neutral || 0) + (user.stats?.review?.received?.negative || 0), maxValue: 1000 },
-      { label: "Positive Reviews", value: user.stats?.review?.received?.positive || 0, maxValue: 500 },
-      { label: "Neutral Reviews", value: user.stats?.review?.received?.neutral || 0, maxValue: 200 },
-      { label: "Negative Reviews", value: user.stats?.review?.received?.negative || 0, maxValue: 100 },
-      { label: "Vouches Given", value: user.stats?.vouch?.given?.count || 0, maxValue: 500 },
-      { label: "Vouches Received", value: user.stats?.vouch?.received?.count || 0, maxValue: 500 },
-      { label: "ETH Vouch Given", value: user.stats?.vouch?.given?.amountWeiTotal ? parseFloat(user.stats.vouch.given.amountWeiTotal) / Math.pow(10, 18) : 0, maxValue: 100 },
-      { label: "ETH Vouch Received", value: user.stats?.vouch?.received?.amountWeiTotal ? parseFloat(user.stats.vouch.received.amountWeiTotal) / Math.pow(10, 18) : 0, maxValue: 100 }
+      { label: "Total Reviews\n(Received)", value: (user.stats?.review?.received?.positive || 0) + (user.stats?.review?.received?.neutral || 0) + (user.stats?.review?.received?.negative || 0), maxValue: 1000 },
+      { label: "Positive Reviews\n(Received)", value: user.stats?.review?.received?.positive || 0, maxValue: 500 },
+      { label: "Neutral Reviews\n(Received)", value: user.stats?.review?.received?.neutral || 0, maxValue: 200 },
+      { label: "Negative Reviews\n(Received)", value: user.stats?.review?.received?.negative || 0, maxValue: 100 },
+      { label: "Total Reviews\n(Given)", value: (user.stats?.review?.given?.positive || 0) + (user.stats?.review?.given?.neutral || 0) + (user.stats?.review?.given?.negative || 0), maxValue: 1000 },
+      { label: "Positive Reviews\n(Given)", value: user.stats?.review?.given?.positive || 0, maxValue: 500 },
+      { label: "Neutral Reviews\n(Given)", value: user.stats?.review?.given?.neutral || 0, maxValue: 200 },
+      { label: "Negative Reviews\n(Given)", value: user.stats?.review?.given?.negative || 0, maxValue: 100 },
+                    { label: "Vouches\n(Given)", value: user.stats?.vouch?.given?.count || 0, maxValue: 500 },
+              { label: "Vouches\n(Received)", value: user.stats?.vouch?.received?.count || 0, maxValue: 500 },
+              { label: "ETH Vouch\n(Given)", value: user.stats?.vouch?.given?.amountWeiTotal ? parseFloat(user.stats.vouch.given.amountWeiTotal) / Math.pow(10, 18) : 0, maxValue: 100 },
+              { label: "ETH Vouch\n(Received)", value: user.stats?.vouch?.received?.amountWeiTotal ? parseFloat(user.stats.vouch.received.amountWeiTotal) / Math.pow(10, 18) : 0, maxValue: 100 }
     ];
 
     return (

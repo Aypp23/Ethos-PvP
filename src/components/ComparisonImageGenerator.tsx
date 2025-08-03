@@ -30,6 +30,9 @@ export const ComparisonImageGenerator = ({ user1, user2 }: ComparisonImageGenera
       totalReviews: (user.stats?.review?.received?.positive || 0) + 
                    (user.stats?.review?.received?.neutral || 0) + 
                    (user.stats?.review?.received?.negative || 0),
+      totalReviewsGiven: (user.stats?.review?.given?.positive || 0) + 
+                        (user.stats?.review?.given?.neutral || 0) + 
+                        (user.stats?.review?.given?.negative || 0),
       ethVouchReceived: user.stats?.vouch?.received?.amountWeiTotal ? parseFloat(user.stats.vouch.received.amountWeiTotal) / Math.pow(10, 18) : 0
     };
   };
@@ -132,17 +135,11 @@ export const ComparisonImageGenerator = ({ user1, user2 }: ComparisonImageGenera
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
             <img 
-              src="/ethos-pvp-logo.png" 
+              src="/ethos-pvp-logo-modified.png" 
               alt="Ethos PvP Logo" 
-              className="h-48 md:h-56 object-contain invert"
+              className="h-48 md:h-56 object-contain"
             />
           </div>
-          <h1 className="text-4xl font-bold mb-3" style={{ color: 'rgb(35, 35, 32)' }}>
-            Profile Comparison
-          </h1>
-          <p className="text-lg" style={{ color: 'rgb(35, 35, 32)' }}>
-            Head-to-Head Performance Analysis
-          </p>
         </div>
 
         {/* Comparison Cards */}
@@ -150,10 +147,10 @@ export const ComparisonImageGenerator = ({ user1, user2 }: ComparisonImageGenera
           {[user1, user2].map((user, index) => {
             const stats = getKeyStats(user);
             return (
-              <div key={user.username} className="overflow-hidden rounded-[32px] shadow-lg max-w-md w-full bg-white border border-[#2d2d29]">
-                <div className="p-6 pb-4">
+              <div key={user.username} className="overflow-hidden rounded-[32px] shadow-lg max-w-md w-full bg-white">
+                <div className="p-6 pb-2">
                   {/* Profile Header */}
-                  <div className="flex items-center gap-4 mb-6">
+                  <div className="flex items-center gap-4 mb-2">
                     <div className="relative">
                       <img
                         src={user.avatar || 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png'}
@@ -179,7 +176,17 @@ export const ComparisonImageGenerator = ({ user1, user2 }: ComparisonImageGenera
                           @{user.username}
                         </a>
                       </p>
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ color: 'rgb(35, 35, 32)' }}>
+                      <span 
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" 
+                        style={{ 
+                          color: user.score >= 2000 ? '#7a5eaf' :
+                                 user.score >= 1600 ? '#117f31' :
+                                 user.score >= 1200 ? '#c1c0b6' :
+                                 user.score >= 800 ? '#c29011' :
+                                 user.score >= 0 ? '#b72c37' :
+                                 'rgb(35, 35, 32)'
+                        }}
+                      >
                         {user.level ? user.level.charAt(0).toUpperCase() + user.level.slice(1) : 'User'}
                       </span>
                     </div>
@@ -187,7 +194,7 @@ export const ComparisonImageGenerator = ({ user1, user2 }: ComparisonImageGenera
                 </div>
 
                                 {/* Key Stats */}
-                <div className="mx-6 mb-6 rounded-2xl p-4 space-y-2">
+                <div className="mx-6 mb-4 rounded-2xl p-4 space-y-2">
                   <div className="flex items-center justify-between p-3">
                     <div className="flex items-center">
                       <span className="text-sm font-medium text-gray-700">Ethos Score</span>
@@ -204,14 +211,21 @@ export const ComparisonImageGenerator = ({ user1, user2 }: ComparisonImageGenera
 
                   <div className="flex items-center justify-between p-3">
                     <div className="flex items-center">
-                      <span className="text-sm font-medium text-gray-700">Total Reviews</span>
+                      <span className="text-sm font-medium text-gray-700">Total Reviews<br />(Received)</span>
                     </div>
                     <span className="text-lg font-bold text-gray-900">{stats.totalReviews.toLocaleString()}</span>
                   </div>
 
                   <div className="flex items-center justify-between p-3">
                     <div className="flex items-center">
-                      <span className="text-sm font-medium text-gray-700">ETH Vouch Received</span>
+                      <span className="text-sm font-medium text-gray-700">Total Reviews<br />(Given)</span>
+                    </div>
+                    <span className="text-lg font-bold text-gray-900">{stats.totalReviewsGiven.toLocaleString()}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3">
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium text-gray-700">ETH Vouch<br />(Received)</span>
                     </div>
                     <span className="text-lg font-bold text-gray-900 ml-4">{stats.ethVouchReceived.toFixed(2)}</span>
                   </div>

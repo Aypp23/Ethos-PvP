@@ -95,6 +95,7 @@ export const getUserByTwitterUsername = async (twitterUsername: string): Promise
       const user = profileUser || highScoreUser || exactMatches[0] || searchResponse.data.data.values[0];
       
       console.log('✅ Selected user:', JSON.stringify(user, null, 2));
+      console.log('🔑 User userkey:', user.userkey);
       
       // Get the score level for better accuracy using v2 API
       let level = 'neutral'; // Default level
@@ -111,6 +112,9 @@ export const getUserByTwitterUsername = async (twitterUsername: string): Promise
       
       // Get detailed user data from v2 API using the userkey
       let detailedUserData = null;
+      let reviewsGivenData = null;
+      let vouchesGivenData = null;
+      let vouchesReceivedData = null;
       if (user.userkey) {
         try {
           console.log('🔍 Fetching detailed user data from v2 API...');
@@ -123,6 +127,74 @@ export const getUserByTwitterUsername = async (twitterUsername: string): Promise
               detailedUserData = v2User;
               console.log('✅ Found detailed v2 data:', JSON.stringify(detailedUserData, null, 2));
             }
+          }
+          
+          // Fetch reviews given data
+          try {
+            console.log('📝 Fetching reviews given data...');
+            const reviewsGiven = await getReviewsGiven(user.userkey, 1000);
+            const positiveGiven = reviewsGiven.filter(r => r.rating === 'positive').length;
+            const neutralGiven = reviewsGiven.filter(r => r.rating === 'neutral').length;
+            const negativeGiven = reviewsGiven.filter(r => r.rating === 'negative').length;
+            
+            reviewsGivenData = {
+              positive: positiveGiven,
+              neutral: neutralGiven,
+              negative: negativeGiven
+            };
+            console.log('✅ Reviews given data:', reviewsGivenData);
+          } catch (error) {
+            console.warn('⚠️ Could not fetch reviews given data');
+          }
+          
+                      // Fetch vouches given data
+            try {
+              console.log('🤝 Fetching vouches given data...');
+              const vouchesGiven = await getVouchesGiven(user.userkey, 1000); // Get maximum to ensure we get all
+              console.log('📊 Raw vouches given:', vouchesGiven);
+            
+            const totalAmountGiven = vouchesGiven.reduce((sum, vouch) => {
+              const amount = vouch.amount || 0;
+              console.log(`💰 Vouch amount: ${amount} (type: ${typeof amount})`);
+              return sum + amount;
+            }, 0);
+            
+            // Convert ETH amounts to Wei for storage
+            const amountInWei = totalAmountGiven * Math.pow(10, 18);
+            
+            vouchesGivenData = {
+              count: vouchesGiven.length,
+              amountWeiTotal: amountInWei.toString()
+            };
+            console.log('✅ Vouches given data:', vouchesGivenData);
+            console.log(`💰 Total amount given: ${totalAmountGiven} ETH = ${amountInWei} Wei`);
+          } catch (error) {
+            console.warn('⚠️ Could not fetch vouches given data:', error);
+          }
+          
+                      // Fetch vouches received data
+            try {
+              console.log('🤝 Fetching vouches received data...');
+              const vouchesReceived = await getVouchesReceived(user.userkey, 1000); // Get maximum to ensure we get all
+              console.log('📊 Raw vouches received:', vouchesReceived);
+            
+            const totalAmountReceived = vouchesReceived.reduce((sum, vouch) => {
+              const amount = vouch.amount || 0;
+              console.log(`💰 Vouch amount: ${amount} (type: ${typeof amount})`);
+              return sum + amount;
+            }, 0);
+            
+            // Convert ETH amounts to Wei for storage
+            const amountInWei = totalAmountReceived * Math.pow(10, 18);
+            
+            vouchesReceivedData = {
+              count: vouchesReceived.length,
+              amountWeiTotal: amountInWei.toString()
+            };
+            console.log('✅ Vouches received data:', vouchesReceivedData);
+            console.log(`💰 Total amount received: ${totalAmountReceived} ETH = ${amountInWei} Wei`);
+          } catch (error) {
+            console.warn('⚠️ Could not fetch vouches received data:', error);
           }
         } catch (error) {
           console.warn('⚠️ Could not fetch v2 data, using v1 data only');
@@ -145,20 +217,25 @@ export const getUserByTwitterUsername = async (twitterUsername: string): Promise
         level: level,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        stats: detailedUserData?.stats || {
+        stats: {
           review: {
-            received: {
+            received: detailedUserData?.stats?.review?.received || {
+              positive: 0,
+              neutral: 0,
+              negative: 0
+            },
+            given: reviewsGivenData || {
               positive: 0,
               neutral: 0,
               negative: 0
             }
           },
           vouch: {
-            given: {
+            given: vouchesGivenData || {
               amountWeiTotal: "0",
               count: 0
             },
-            received: {
+            received: vouchesReceivedData || {
               amountWeiTotal: "0",
               count: 0
             }
@@ -206,6 +283,11 @@ export const getUserByTwitterUsername = async (twitterUsername: string): Promise
             positive: Math.floor(Math.random() * 10),
             neutral: Math.floor(Math.random() * 5),
             negative: Math.floor(Math.random() * 3)
+          },
+          given: {
+            positive: Math.floor(Math.random() * 15),
+            neutral: Math.floor(Math.random() * 8),
+            negative: Math.floor(Math.random() * 5)
           }
         },
         vouch: {
@@ -411,19 +493,66 @@ export const getReviewsGiven = async (userkey: string, limit = 1000): Promise<Et
 // Get vouches given by user
 export const getVouchesGiven = async (userkey: string, limit = 1000): Promise<EthosVouch[]> => {
   try {
-    // Use the correct votes endpoint for vouches from the API documentation
-    const response = await api.post('/votes/vouches/given', {
-      userkey,
-      limit,
-      offset: 0,
-      orderBy: {
-        field: 'timestamp',
-        direction: 'desc'
+    console.log(`🔍 Fetching vouches given for userkey: ${userkey}`);
+    
+    // Try different vouch endpoints
+    let response;
+    try {
+      // First try the votes endpoint
+      console.log('📡 Trying /votes/vouches/given endpoint...');
+      response = await api.post('/votes/vouches/given', {
+        userkey,
+        limit,
+        offset: 0,
+        orderBy: {
+          field: 'timestamp',
+          direction: 'desc'
+        }
+      });
+      console.log('✅ /votes/vouches/given response:', response.data);
+    } catch (error) {
+      console.log('❌ /votes/vouches/given failed, trying activities endpoint...');
+      // If that fails, try the activities endpoint
+      response = await api.post('/activities/profile/given', {
+        userkey,
+        filter: ['vouch'],
+        limit: 1000, // Always use maximum limit
+        offset: 0,
+        orderBy: {
+          field: 'timestamp',
+          direction: 'desc'
+        }
+      });
+      console.log('✅ /activities/profile/given response:', response.data);
+    }
+    
+    const activities = response.data.values || [];
+    return activities.map((activity: any) => {
+      // Handle different amount formats from API
+      let amount = 0;
+      if (activity.data?.deposited) {
+        // Convert from Wei to ETH
+        amount = parseFloat(activity.data.deposited) / Math.pow(10, 18);
+      } else if (activity.data?.amount) {
+        amount = parseFloat(activity.data.amount);
+      } else if (activity.amount) {
+        amount = parseFloat(activity.amount);
+      } else if (activity.data?.value) {
+        amount = parseFloat(activity.data.value);
       }
+      
+      console.log(`🔍 Vouch activity:`, activity);
+      console.log(`💰 Parsed amount: ${amount} ETH (from deposited: ${activity.data?.deposited})`);
+      
+      return {
+        id: activity.id || Math.random(),
+        voucher: userkey,
+        vouchee: activity.subject?.userkey || 'unknown',
+        amount: amount,
+        createdAt: new Date(activity.timestamp * 1000).toISOString(),
+      };
     });
-    return response.data.values || [];
   } catch (error) {
-    // Return mock data for testing
     console.warn('Vouches Given API not available, using mock data');
     const mockVouches: EthosVouch[] = [];
     const vouchCount = Math.floor(Math.random() * 20);
@@ -445,19 +574,66 @@ export const getVouchesGiven = async (userkey: string, limit = 1000): Promise<Et
 // Get vouches received by user
 export const getVouchesReceived = async (userkey: string, limit = 1000): Promise<EthosVouch[]> => {
   try {
-    // Use the correct votes endpoint for vouches from the API documentation
-    const response = await api.post('/votes/vouches/received', {
-      userkey,
-      limit,
-      offset: 0,
-      orderBy: {
-        field: 'timestamp',
-        direction: 'desc'
+    console.log(`🔍 Fetching vouches received for userkey: ${userkey}`);
+    
+    // Try different vouch endpoints
+    let response;
+    try {
+      // First try the votes endpoint
+      console.log('📡 Trying /votes/vouches/received endpoint...');
+      response = await api.post('/votes/vouches/received', {
+        userkey,
+        limit,
+        offset: 0,
+        orderBy: {
+          field: 'timestamp',
+          direction: 'desc'
+        }
+      });
+      console.log('✅ /votes/vouches/received response:', response.data);
+    } catch (error) {
+      console.log('❌ /votes/vouches/received failed, trying activities endpoint...');
+      // If that fails, try the activities endpoint
+      response = await api.post('/activities/profile/received', {
+        userkey,
+        filter: ['vouch'],
+        limit: 1000, // Always use maximum limit
+        offset: 0,
+        orderBy: {
+          field: 'timestamp',
+          direction: 'desc'
+        }
+      });
+      console.log('✅ /activities/profile/received response:', response.data);
+    }
+    
+    const activities = response.data.values || [];
+    return activities.map((activity: any) => {
+      // Handle different amount formats from API
+      let amount = 0;
+      if (activity.data?.deposited) {
+        // Convert from Wei to ETH
+        amount = parseFloat(activity.data.deposited) / Math.pow(10, 18);
+      } else if (activity.data?.amount) {
+        amount = parseFloat(activity.data.amount);
+      } else if (activity.amount) {
+        amount = parseFloat(activity.amount);
+      } else if (activity.data?.value) {
+        amount = parseFloat(activity.data.value);
       }
+      
+      console.log(`🔍 Vouch activity:`, activity);
+      console.log(`💰 Parsed amount: ${amount} ETH (from deposited: ${activity.data?.deposited})`);
+      
+      return {
+        id: activity.id || Math.random(),
+        voucher: activity.author?.userkey || 'unknown',
+        vouchee: userkey,
+        amount: amount,
+        createdAt: new Date(activity.timestamp * 1000).toISOString(),
+      };
     });
-    return response.data.values || [];
   } catch (error) {
-    // Return mock data for testing
     console.warn('Vouches Received API not available, using mock data');
     const mockVouches: EthosVouch[] = [];
     const vouchCount = Math.floor(Math.random() * 25);
