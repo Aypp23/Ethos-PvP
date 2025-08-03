@@ -138,8 +138,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgments
 
 - [Ethos Network](https://ethos.network/) for providing the API
-- [Lucide](https://lucide.dev/) for the beautiful icons
-- [Tailwind CSS](https://tailwindcss.com/) for the styling framework
 
 ## Support
 
