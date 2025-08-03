@@ -40,8 +40,8 @@ A modern web application that compares two Ethos profiles side-by-side using the
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd ethos-profile-comparison
+git clone https://github.com/Aypp23/Ethos-PvP.git
+cd Ethos-PvP
 ```
 
 2. Install dependencies:
