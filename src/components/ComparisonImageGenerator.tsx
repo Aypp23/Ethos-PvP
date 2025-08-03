@@ -143,96 +143,205 @@ export const ComparisonImageGenerator = ({ user1, user2 }: ComparisonImageGenera
         </div>
 
         {/* Comparison Cards */}
-        <div className="grid grid-cols-2 gap-6">
-          {[user1, user2].map((user, index) => {
-            const stats = getKeyStats(user);
-            return (
-              <div key={user.username} className="overflow-hidden rounded-[32px] shadow-lg max-w-md w-full bg-white">
-                <div className="p-6 pb-2">
-                  {/* Profile Header */}
-                  <div className="flex items-center gap-4 mb-2">
-                    <div className="relative">
-                      <img
-                        src={user.avatar || 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png'}
-                        alt={user.displayName}
-                        className="w-16 h-16 rounded-full border-4 border-white/30 shadow-lg object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png';
-                        }}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold mb-1" style={{ color: 'rgb(35, 35, 32)' }}>
-                        {user.displayName}
-                      </h3>
-                      <p className="text-sm mb-2" style={{ color: 'rgb(35, 35, 32)' }}>
-                        <a 
-                          href={`https://app.ethos.network/profile/x/${user.username}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:underline cursor-pointer"
-                          style={{ color: 'rgb(35, 35, 32)' }}
-                        >
-                          @{user.username}
-                        </a>
-                      </p>
-                      <span 
-                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" 
-                        style={{ 
-                          color: user.score >= 2000 ? '#7a5eaf' :
-                                 user.score >= 1600 ? '#117f31' :
-                                 user.score >= 1200 ? '#c1c0b6' :
-                                 user.score >= 800 ? '#c29011' :
-                                 user.score >= 0 ? '#b72c37' :
-                                 'rgb(35, 35, 32)'
-                        }}
-                      >
-                        {user.level ? user.level.charAt(0).toUpperCase() + user.level.slice(1) : 'User'}
-                      </span>
-                    </div>
-                  </div>
+        <div className="flex items-center justify-center gap-8">
+          {/* First Card */}
+          <div className="overflow-hidden rounded-[32px] shadow-lg max-w-md w-full" style={{ backgroundColor: 'transparent' }}>
+            <div className="p-6 pb-2">
+              {/* Profile Header */}
+              <div className="flex items-center gap-4 mb-2">
+                <div className="relative">
+                  <img
+                    src={user1.avatar || 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png'}
+                    alt={user1.displayName}
+                    className="w-16 h-16 rounded-full shadow-lg object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png';
+                    }}
+                  />
                 </div>
-
-                                {/* Key Stats */}
-                <div className="mx-6 mb-4 rounded-2xl p-4 space-y-2">
-                  <div className="flex items-center justify-between p-3">
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium text-gray-700">Ethos Score</span>
-                    </div>
-                    <span className="text-lg font-bold text-gray-900">{stats.ethosScore.toLocaleString()}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3">
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium text-gray-700">Total XP</span>
-                    </div>
-                    <span className="text-lg font-bold text-gray-900">{stats.totalXPFormatted}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3">
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium text-gray-700">Total Reviews<br />(Received)</span>
-                    </div>
-                    <span className="text-lg font-bold text-gray-900">{stats.totalReviews.toLocaleString()}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3">
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium text-gray-700">Total Reviews<br />(Given)</span>
-                    </div>
-                    <span className="text-lg font-bold text-gray-900">{stats.totalReviewsGiven.toLocaleString()}</span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3">
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium text-gray-700">ETH Vouch<br />(Received)</span>
-                    </div>
-                    <span className="text-lg font-bold text-gray-900 ml-4">{stats.ethVouchReceived.toFixed(2)}</span>
-                  </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-1" style={{ color: 'rgb(35, 35, 32)' }}>
+                    {user1.displayName}
+                  </h3>
+                  <p className="text-sm mb-2" style={{ color: 'rgb(35, 35, 32)' }}>
+                    <a 
+                      href={`https://app.ethos.network/profile/x/${user1.username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline cursor-pointer"
+                      style={{ color: 'rgb(35, 35, 32)' }}
+                    >
+                      @{user1.username}
+                    </a>
+                  </p>
+                  <span 
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" 
+                    style={{ 
+                      color: user1.score >= 2000 ? '#7a5eaf' :
+                             user1.score >= 1600 ? '#117f31' :
+                             user1.score >= 1200 ? '#c1c0b6' :
+                             user1.score >= 800 ? '#c29011' :
+                             user1.score >= 0 ? '#b72c37' :
+                             'rgb(35, 35, 32)'
+                    }}
+                  >
+                    {user1.level ? user1.level.charAt(0).toUpperCase() + user1.level.slice(1) : 'User'}
+                  </span>
                 </div>
               </div>
-            );
-          })}
+            </div>
+
+            {/* Key Stats */}
+            <div className="mx-6 mb-4 rounded-2xl p-4 space-y-2" style={{ backgroundColor: 'transparent' }}>
+              {(() => {
+                const stats = getKeyStats(user1);
+                return (
+                  <>
+                    <div className="flex items-center justify-between p-3">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium" style={{ color: 'rgb(20, 20, 20)' }}>Ethos Score</span>
+                      </div>
+                      <span className="text-lg font-bold" style={{ color: 'rgb(10, 10, 10)' }}>{stats.ethosScore.toLocaleString()}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium" style={{ color: 'rgb(20, 20, 20)' }}>Total XP</span>
+                      </div>
+                      <span className="text-lg font-bold" style={{ color: 'rgb(10, 10, 10)' }}>{stats.totalXPFormatted}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium" style={{ color: 'rgb(20, 20, 20)' }}>Total Reviews<br />(Received)</span>
+                      </div>
+                      <span className="text-lg font-bold" style={{ color: 'rgb(10, 10, 10)' }}>{stats.totalReviews.toLocaleString()}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium" style={{ color: 'rgb(20, 20, 20)' }}>Total Reviews<br />(Given)</span>
+                      </div>
+                      <span className="text-lg font-bold" style={{ color: 'rgb(10, 10, 10)' }}>{stats.totalReviewsGiven.toLocaleString()}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium" style={{ color: 'rgb(20, 20, 20)' }}>ETH Vouch<br />(Received)</span>
+                      </div>
+                      <span className="text-lg font-bold ml-4" style={{ color: 'rgb(10, 10, 10)' }}>{stats.ethVouchReceived.toFixed(2)}</span>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+
+          {/* VS Image */}
+          <div className="flex items-center justify-center">
+            <img 
+              src="/ChatGPT Image Aug 3, 2025, 11_17_32 PM-modified-modified.png" 
+              alt="VS" 
+              className="w-24 h-24 object-contain"
+              style={{ 
+                filter: 'brightness(0) saturate(100%) invert(0)',
+                mixBlendMode: 'multiply'
+              }}
+            />
+          </div>
+
+          {/* Second Card */}
+          <div className="overflow-hidden rounded-[32px] shadow-lg max-w-md w-full" style={{ backgroundColor: 'transparent' }}>
+            <div className="p-6 pb-2">
+              {/* Profile Header */}
+              <div className="flex items-center gap-4 mb-2">
+                <div className="relative">
+                  <img
+                    src={user2.avatar || 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png'}
+                    alt={user2.displayName}
+                    className="w-16 h-16 rounded-full shadow-lg object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png';
+                    }}
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-1" style={{ color: 'rgb(35, 35, 32)' }}>
+                    {user2.displayName}
+                  </h3>
+                  <p className="text-sm mb-2" style={{ color: 'rgb(35, 35, 32)' }}>
+                    <a 
+                      href={`https://app.ethos.network/profile/x/${user2.username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline cursor-pointer"
+                      style={{ color: 'rgb(35, 35, 32)' }}
+                    >
+                      @{user2.username}
+                    </a>
+                  </p>
+                  <span 
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" 
+                    style={{ 
+                      color: user2.score >= 2000 ? '#7a5eaf' :
+                             user2.score >= 1600 ? '#117f31' :
+                             user2.score >= 1200 ? '#c1c0b6' :
+                             user2.score >= 800 ? '#c29011' :
+                             user2.score >= 0 ? '#b72c37' :
+                             'rgb(35, 35, 32)'
+                    }}
+                  >
+                    {user2.level ? user2.level.charAt(0).toUpperCase() + user2.level.slice(1) : 'User'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Key Stats */}
+            <div className="mx-6 mb-4 rounded-2xl p-4 space-y-2" style={{ backgroundColor: 'transparent' }}>
+              {(() => {
+                const stats = getKeyStats(user2);
+                return (
+                  <>
+                    <div className="flex items-center justify-between p-3">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium" style={{ color: 'rgb(20, 20, 20)' }}>Ethos Score</span>
+                      </div>
+                      <span className="text-lg font-bold" style={{ color: 'rgb(10, 10, 10)' }}>{stats.ethosScore.toLocaleString()}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium" style={{ color: 'rgb(20, 20, 20)' }}>Total XP</span>
+                      </div>
+                      <span className="text-lg font-bold" style={{ color: 'rgb(10, 10, 10)' }}>{stats.totalXPFormatted}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium" style={{ color: 'rgb(20, 20, 20)' }}>Total Reviews<br />(Received)</span>
+                      </div>
+                      <span className="text-lg font-bold" style={{ color: 'rgb(10, 10, 10)' }}>{stats.totalReviews.toLocaleString()}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium" style={{ color: 'rgb(20, 20, 20)' }}>Total Reviews<br />(Given)</span>
+                      </div>
+                      <span className="text-lg font-bold" style={{ color: 'rgb(10, 10, 10)' }}>{stats.totalReviewsGiven.toLocaleString()}</span>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3">
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium" style={{ color: 'rgb(20, 20, 20)' }}>ETH Vouch<br />(Received)</span>
+                      </div>
+                      <span className="text-lg font-bold ml-4" style={{ color: 'rgb(10, 10, 10)' }}>{stats.ethVouchReceived.toFixed(2)}</span>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
         </div>
 
 
