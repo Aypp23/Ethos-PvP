@@ -151,4 +151,4 @@ If you encounter any issues or have questions, please:
 
 ---
 
-Built with ❤️ for the Ethos community 
+Built with ❤️ for the Ethos community by [ololade_eth](https://x.com/ololade_eth) 
