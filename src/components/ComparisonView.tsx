@@ -361,20 +361,17 @@ const ComparisonView: React.FC<ComparisonViewProps> = () => {
 
     if (!user) {
       return (
-        <div className="relative rounded-[32px] overflow-hidden shadow-card max-w-md w-full bg-white border border-[#2d2d29]">
+        <div 
+          className="relative rounded-[32px] overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300 transform hover:-translate-y-1 max-w-md w-full bg-white border border-[#2d2d29] cursor-pointer"
+          onClick={() => openOverlay(side === 'left' ? 'user1' : 'user2')}
+        >
           <div className="p-6 text-center">
-            <div className="w-16 h-16 border-2 border-dashed border-gray-400 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-16 h-16 border-2 border-dashed border-gray-400 rounded-full flex items-center justify-center mx-auto mb-4 hover:border-gray-500 transition-colors">
+              <svg className="w-8 h-8 text-gray-400 hover:text-gray-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <p className="text-text-secondary text-lg mb-4">Add Username</p>
-            <button
-              onClick={() => openOverlay(side === 'left' ? 'user1' : 'user2')}
-              className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-            >
-              Select Profile
-            </button>
+            <p className="text-text-secondary text-lg hover:text-gray-600 transition-colors">Add Username</p>
           </div>
         </div>
       );
@@ -484,7 +481,7 @@ const ComparisonView: React.FC<ComparisonViewProps> = () => {
         {!user1 && !user2 && !loading1 && !loading2 && (
           <div className="text-center py-20">
             <p className="text-text-dark text-xl">
-              Click "Select Profile" to start comparing profiles!
+              Click on either card to start comparing profiles!
             </p>
           </div>
         )}
