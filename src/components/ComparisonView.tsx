@@ -415,7 +415,7 @@ const ComparisonView: React.FC<ComparisonViewProps> = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 justify-items-center max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-0 justify-items-center max-w-5xl mx-auto">
           <ProfileCard user={user1} loading={loading1} error={error1} side="left" />
           <ProfileCard user={user2} loading={loading2} error={error2} side="right" />
         </div>
