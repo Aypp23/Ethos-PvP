@@ -16,33 +16,70 @@ const ComparisonView: React.FC<ComparisonViewProps> = () => {
   const [error2, setError2] = useState<string | null>(null);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [overlayTarget, setOverlayTarget] = useState<'user1' | 'user2' | null>(null);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
   // Handle URL parameters for direct comparison links
   useEffect(() => {
+    // Skip if initial load is already complete
+    if (initialLoadComplete) {
+      return;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const user1Param = urlParams.get('user1');
     const user2Param = urlParams.get('user2');
 
     const loadUserFromParam = async (username: string, setUser: (user: EthosUser | null) => void, setLoading: (loading: boolean) => void, setError: (error: string | null) => void) => {
-      setLoading(true);
       setError(null);
       try {
+        console.log(`🔄 Loading user from URL param: ${username}`);
         const userData = await getUserByTwitterUsername(username);
-        setUser(userData);
+        console.log(`✅ User data loaded for ${username}:`, userData);
+        
+        // Verify that the user data has the required stats
+        if (!userData.stats || !userData.stats.review || !userData.stats.vouch) {
+          console.warn(`⚠️ Incomplete user data for ${username}, retrying...`);
+          // Wait a bit and retry
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          const retryData = await getUserByTwitterUsername(username);
+          console.log(`✅ Retry user data for ${username}:`, retryData);
+          setUser(retryData);
+        } else {
+          setUser(userData);
+        }
       } catch (error: any) {
+        console.error(`❌ Error loading user ${username}:`, error);
         setError(error.message || 'Failed to load user data');
       } finally {
         setLoading(false);
       }
     };
 
-    if (user1Param && !user1) {
-      loadUserFromParam(user1Param, setUser1, setLoading1, setError1);
-    }
-    if (user2Param && !user2) {
-      loadUserFromParam(user2Param, setUser2, setLoading2, setError2);
-    }
-  }, [user1, user2]);
+    // Load users sequentially to avoid race conditions
+    const loadUsersSequentially = async () => {
+      // Set both loading states immediately for better UX
+      if (user1Param && !user1 && !loading1) {
+        setLoading1(true);
+      }
+      if (user2Param && !user2 && !loading2) {
+        setLoading2(true);
+      }
+
+      // Load user1 first
+      if (user1Param && !user1) {
+        await loadUserFromParam(user1Param, setUser1, setLoading1, setError1);
+      }
+      
+      // Then load user2
+      if (user2Param && !user2) {
+        await loadUserFromParam(user2Param, setUser2, setLoading2, setError2);
+      }
+      
+      setInitialLoadComplete(true);
+    };
+
+    loadUsersSequentially();
+  }, []); // Only run once on mount
 
   const handleUser1Select = async (profile: any) => {
     setLoading1(true);
