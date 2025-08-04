@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Download, Share2 } from "lucide-react";
+import { Download } from "lucide-react";
 import html2canvas from "html2canvas";
 import { toast } from "sonner";
 import { EthosUser } from '../types';
@@ -121,7 +121,7 @@ export const ComparisonImageGenerator = ({ user1, user2 }: ComparisonImageGenera
             style={{ fontFeatureSettings: '"calt" 0', color: 'rgb(35, 35, 32)' }}
             title="Share to Twitter"
           >
-            <Share2 className="w-6 h-6" />
+            <img src="/Adobe Express - file.png" alt="Share to X" className="w-6 h-6" />
           </button>
         </div>
       </div>
